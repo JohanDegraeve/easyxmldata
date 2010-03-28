@@ -1,4 +1,4 @@
-#summary Offers an Interface, Utilites and a Parser which allows an easy SAX XML Parser implementation for custom XML elements and corresponding java classes.
+#summary easyxmldata offers an Interface, Utilites and a Parser which allows an easy SAX XML Parser implementation for custom XML elements and corresponding java classes.
 
 = Introduction =
 
