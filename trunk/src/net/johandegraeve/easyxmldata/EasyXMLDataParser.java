@@ -95,34 +95,9 @@ public class EasyXMLDataParser  extends DefaultHandler {
     //private String defaultPrefixname = "QDFI67HJDHFJ234";
     
     /**
-     * copied those silly exception strings from org.htmlparser.http
-     */
-    private static final String[] FOUR_OH_FOUR =
-    {
-        "The web site you seek cannot be located,"
-            + " but countless more exist",
-        "You step in the stream, but the water has moved on."
-            + " This page is not here.",
-        "Yesterday the page existed. Today it does not."
-            + " The internet is like that.",
-        "That page was so big. It might have been very useful."
-            + " But now it is gone.",
-        "Three things are certain: death, taxes and broken links."
-            + " Guess which has occured.",
-        "Chaos reigns within. Reflect, repent and enter the correct URL."
-            + " Order shall return.",
-        "Stay the patient course. Of little worth is your ire."
-            + " The page is not found.",
-        "A non-existant URL reduces your expensive computer to a simple stone.",
-        "Many people have visited that page."
-            + " Today, you are not one of the lucky ones.",
-        "Cutting the wind with a knife. Bookmarking a URL."
-            + " Both are ephemeral.",
-    };
-
-    
-    /**
-     * constructor
+     * constructor<br>
+     * packageNames and prefixNames can both be null but if one of them is not null then both should be not null.<br>
+     * if packageNames and prefixNames are both null then the value of ignoreUnknownTags will be set to true no matter the input value.
      * @param packagesNames list of packagesNames to search for classes with same name as tags found
      * @param prefixNames list of prefixnames , by which founds tags should be prefixed while searching for classes
      * @param ignoreUnknownTags if true then if tags are found in the XML for which no corresponding class is found, a DefaultXMLELement will be created.
@@ -130,16 +105,23 @@ public class EasyXMLDataParser  extends DefaultHandler {
     public EasyXMLDataParser (String[] packagesNames, String[] prefixNames, boolean ignoreUnknownTags) {
 	this.packagesNames = packagesNames;
 	this.prefixNames = prefixNames;
+	if (packagesNames == null && prefixNames != null)
+	    throw new NullPointerException("packageNames and prefixNames should either be both null or both non null");
+	if (packagesNames != null && prefixNames == null)
+	    throw new NullPointerException("packageNames and prefixNames should either be both null or both non null");
 	this.ignoreUnknownTags = ignoreUnknownTags;
+	if (packagesNames == null || prefixNames == null)
+	    ignoreUnknownTags = true;
     }
     
     /**
-     * constructor, createas an EasyXMLDataParser with ignoreUnknownTags = false
+     * constructor, createas an EasyXMLDataParser with ignoreUnknownTags = true<br>
+     * packageNames nad prefixNames can both be null but if one of them is not null then both should be not null.
      * @param packagesNames list of packagesNames to search for classes with same name as tags found
      * @param prefixNames list of prefixnames , by which founds tags should be prefixed while searching for classes
      */
     public EasyXMLDataParser (String[] packagesNames, String[] prefixNames) {
-	this(packagesNames, prefixNames,false);
+	this(packagesNames, prefixNames,true);
     }
     
     /**
@@ -225,12 +207,8 @@ public class EasyXMLDataParser  extends DefaultHandler {
             parser.parse(getInputStream(url), this);
             return rootFromXML;
         } catch (Exception e) {
-            String exceptionString = e.toString();
-            for (int i = 0; i < FOUR_OH_FOUR.length; i++) {
-        	exceptionString = exceptionString.replaceAll(FOUR_OH_FOUR[i],"404 page not found");
-            }
             throw new SAXParseException("Exception : \n" + 
-        	    exceptionString +  "\n", locator);
+        	    e.toString() +  "\n", locator);
         } 
     }
 
@@ -272,12 +250,8 @@ public class EasyXMLDataParser  extends DefaultHandler {
             parser.parse(inputStream, this);
             return rootFromXML;
         } catch (Exception e) {
-            String exceptionString = e.toString();
-            for (int i = 0; i < FOUR_OH_FOUR.length; i++) {
-        	exceptionString = exceptionString.replaceAll(FOUR_OH_FOUR[i],"404 page not found");
-            }
             throw new SAXParseException("Exception : \n" + 
-        	    exceptionString +  "\n", locator);
+        	    e.toString() +  "\n", locator);
         } 
     }
 
@@ -325,53 +299,57 @@ public class EasyXMLDataParser  extends DefaultHandler {
         String tagName = name;
         stringBuilderStack.push(new StringBuilder());
         
-        //try to create an easyxmldata instance of type packagename.prefixname+name, with packagename
-        //each of the list in packagenames, prefixname the corresponding prefix. If it fails, throws exception
-        //which means, if the tag found is for instance "book", then go through the list of packages and prefixes and
-        //try to instantiate an EasyXMLData instance of type packagename.prefixesbook
-        for (int i = 0;i < packagesNames.length; i++) {
-             try {
-		clsHandler = Class.forName(packagesNames[i] + "." + prefixNames[i] + tagName);
-		try {
-		    XMLObjectStack.push((XMLElement)clsHandler.newInstance());
-		} catch (InstantiationException e) {
-		    e.printStackTrace();
-		} catch (IllegalAccessException e) {
-		    SAXParseException ex = new SAXParseException(
-			    "Tag : " +
-			    tagName +
-		    	    " found but corresponding class " +
-		    	    clsHandler.getName() +
-		    	    " does not allow access to no-argument constructor", 
-		    	    locator);
-		    throw ex;
-		}
-		//if following code is execute then it means the class was successfully created
-		//so no need to go through the rest of the packageNames
-		i = packagesNames.length;
-	             
-	        try {
-		    XMLObjectStack.peek().addAttributes(attributes);
-		} catch (SAXException e) {
-		    //instance of EasyXMLData class may throw an exception because it doesn't like the attributes
-		    throw new SAXParseException(e.getMessage(), locator, e);
-		}
-	    } catch (ClassNotFoundException e) {
-		if (i == (packagesNames.length - 1)) {
-		    if (!ignoreUnknownTags) {
-			SAXParseException ex = new SAXParseException(
-				"Unknown tag received : " +
-				tagName +
-				".", 
-				locator);
-			throw ex;
-		    } else {
-			XMLObjectStack.push(new DefaultXMLElement().setTagName(tagName)).addAttributes(attributes);
-			//prefixNameStack.push(defaultPrefixname );
-		    }
-		}
+        try {
+            //try to create an easyxmldata instance of type packagename.prefixname+name, with packagename
+            //each of the list in packagenames, prefixname the corresponding prefix. If it fails, throws exception
+            //which means, if the tag found is for instance "book", then go through the list of packages and prefixes and
+            //try to instantiate an EasyXMLData instance of type packagename.prefixesbook
+	    for (int i = 0;i < packagesNames.length; i++) {
+	         try {
+	    	clsHandler = Class.forName(packagesNames[i] + "." + prefixNames[i] + tagName);
+	    	try {
+	    	    XMLObjectStack.push((XMLElement)clsHandler.newInstance());
+	    	} catch (InstantiationException e) {
+	    	    e.printStackTrace();
+	    	} catch (IllegalAccessException e) {
+	    	    SAXParseException ex = new SAXParseException(
+	    		    "Tag : " +
+	    		    tagName +
+	    	    	    " found but corresponding class " +
+	    	    	    clsHandler.getName() +
+	    	    	    " does not allow access to no-argument constructor", 
+	    	    	    locator);
+	    	    throw ex;
+	    	}
+	    	//if following code is execute then it means the class was successfully created
+	    	//so no need to go through the rest of the packageNames
+	    	i = packagesNames.length;
+	                 
+	            try {
+	    	    XMLObjectStack.peek().addAttributes(attributes);
+	    	} catch (SAXException e) {
+	    	    //instance of EasyXMLData class may throw an exception because it doesn't like the attributes
+	    	    throw new SAXParseException(e.getMessage(), locator, e);
+	    	}
+	        } catch (ClassNotFoundException e) {
+	    	if (i == (packagesNames.length - 1)) {
+	    	    if (!ignoreUnknownTags) {
+	    		SAXParseException ex = new SAXParseException(
+	    			"Unknown tag received : " +
+	    			tagName +
+	    			".", 
+	    			locator);
+	    		throw ex;
+	    	    } else {
+	    		XMLObjectStack.push(new DefaultXMLElement().setTagName(tagName)).addAttributes(attributes);
+	    	    }
+	    	}
+	        }
 	    }
-        }
+	} catch (NullPointerException e) {
+	    // packagenames = null, ignore unknown tags
+	    XMLObjectStack.push(new DefaultXMLElement().setTagName(tagName)).addAttributes(attributes);
+	}
     }
     
     /**
