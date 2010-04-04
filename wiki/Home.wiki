@@ -2,7 +2,7 @@
 
 = Introduction =
 
-You want to parse an XML document and create corresponding classes that will hold the parsed XML elements. Easyxmldata allows you to create your own classes that will represent the XML elements. For each possible tag that can be foud in the XML document, you need to define a custom class with the same name. Each class needs to implement the interface XMLElement.
+You want to parse an XML document and create corresponding classes that will hold the parsed XML elements. Easyxmldata allows you to create your own classes that will represent the XML elements. For each possible tag that can be foud in the XML document, you need to define a custom class with the same name. Each class needs to implement the interface XMLElement and must define a public consructor.
 
 = JavaDoc =
 
@@ -27,4 +27,4 @@ A trick is implemented to allow to define the classes corresponding to the XML e
 The trick is that a prefix can be added before the name of the Element in the class name. When creating a EasyXMLDataParser, then a list of package names and prefix names needs to be supplied. Whenever a tag is encountered in a parsed XML document, the parser will search for a class in each package supplied, but the class name will be prefixed with the corresponding prefix in the supplied array.
 When validating a received XML Element in [http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/XMLElement.html#addChild%28net.johandegraeve.easyxmldata.XMLElement%29addChild addChild], and if you want to validate the type of XML element received, then it is important to know that the class of the XMLElement will be prefix+XML element name.
 
-The [http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/Utilities.html  Utilities] class defines some useful static methods. 
+The [http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/Utilities.html  Utilities] class defines some useful static methods.
