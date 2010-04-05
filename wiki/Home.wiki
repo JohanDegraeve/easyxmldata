@@ -23,7 +23,7 @@ The methods also allow to
 
 The package defines a EasyXMLDataParser class. This is where [http://java.sun.com/j2se/1.4.2/docs/api/org/xml/sax/helpers/DefaultHandler.html DefaultHandler] is extended. The class overrides DefaultHandler's methods  characters, endDocument , endElement, setDocumentLocator , startDocument, startElement  and from there the methods defined in [http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/XMLElement.html XMLElement] are called for an instance of a class with the same name as the tag found in the XML Document.
 
-A trick is implemented to allow to define the classes corresponding to the XML elements, with a bit more clear names than just the name of the tag in smaller case.
+A trick is implemented to allow to define the classes corresponding to the XML elements, with a bit more clear names than just the name of the tag.
 The trick is that a prefix can be added before the name of the Element in the class name. When creating a EasyXMLDataParser, then a list of package names and prefix names needs to be supplied. Whenever a tag is encountered in a parsed XML document, the parser will search for a class in each package supplied, but the class name will be prefixed with the corresponding prefix in the supplied array.
 When validating a received XML Element in [http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/XMLElement.html#addChild%28net.johandegraeve.easyxmldata.XMLElement%29addChild addChild], and if you want to validate the type of XML element received, then it is important to know that the class of the XMLElement will be prefix+XML element name.
 
