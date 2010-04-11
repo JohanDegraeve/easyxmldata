@@ -28,11 +28,9 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * Defines methods to be implemented for every possible XML Element that can be created based on tags found in the parsed XML page.<br>
  * Per allowed tag in the xml, there must be one class that implements XMLElement and that has the same name as the name of the tag<br>
- * It is also possible to define the custom classes with a Start string followed by the tag name. In that case the list off packagenames
- * <br>When creating the {@link net.johandegraeve.easyxmldata.EasyXMLDataParser} object, it must include a package name being the real package name followed by
- * &quot;.&quot;<i>the starting string&quot;</i>
+ * <br>It is also possible to define the custom classes with a Prefix string followed by the tag name. 
  * <br><br>
- * Any class that implements XMLElement must have a public constructor with no arguments.
+ * <b>Any class that implements XMLElement must have a public constructor with no arguments.</b><br>
  * <br>
  * The class implementing the methods should verify itself whether the received arguments are acceptable or not, and if not throw
  * a SAXException with a text explaining what is wrong. For instance there could be an attempt to add a child of a certain type (ie with a 
