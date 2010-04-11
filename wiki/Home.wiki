@@ -28,3 +28,5 @@ The trick is that a prefix can be added before the name of the Element in the cl
 When validating a received XML Element in [http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/XMLElement.html#addChild%28net.johandegraeve.easyxmldata.XMLElement%29addChild addChild], and if you want to validate the type of XML element received, then it is important to know that the class of the XMLElement will be prefix+XML element name.
 
 The [http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/Utilities.html  Utilities] class defines some useful static methods.
+
+'<'test'>'
