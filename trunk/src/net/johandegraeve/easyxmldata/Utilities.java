@@ -215,12 +215,23 @@ public class Utilities {
      * to verify if a certain child type is allowed, if none of the childNames is allowed, then a SAXException is thrown<br>
      * Throwing an exception is the actual return value of this method.<br>
      * @param child the child
-     * @param tagPrefixes tagPrefixes + childNames form the names of allowed children for the parentName
-     * @param childNames tagPrefixes + childNames form the names of allowed children for the parentName
+     * @param tagPrefixes tagPrefixes + childNames form the names of allowed children for the parentName, tagPrefix can be null,
+     * tagPrefixes and childNames should have the same length
+     * @param childNames tagPrefix + childNames form the names of allowed children for the parentName, childNames can be null
+     * tagPrefixes and childNames should have the same length
      * @param parentName the parentName
      * @throws SAXException in case none of the childnames is allowed, an exception is thrown with explanation text that lists the allowed children
      */
     public static void verifyChildType(XMLElement child, String[] tagPrefixes,String[] childNames, String parentName) throws SAXException {
+	
+	if (childNames != null)
+	    if (childNames.length != tagPrefixes.length)
+		throw new IllegalArgumentException("Method verifyChildType in Utilities class : childNames and tagPrefixes should have the same length");
+
+	if (childNames == null) {
+	    if (child != null)
+		throw new SAXException("No children allowed for element of type" + parentName);
+	} else
 	for (int i = 0; i < tagPrefixes.length; i++) {
 	    if (Utilities.getClassname(child.getClass()).equals(
 		tagPrefixes[i] +
@@ -244,15 +255,18 @@ public class Utilities {
     /**
      * a version of {@link #verifyChildType(XMLElement, String[], String[], String)} where only one tagPrefix is supplied
      * @param child the child
-     * @param tagPrefix tagPrefix + childNames form the names of allowed children for the parentName
-     * @param childNames tagPrefix + childNames form the names of allowed children for the parentName
+     * @param tagPrefix tagPrefix + childNames form the names of allowed children for the parentName, tagPrefix can be null
+     * @param childNames tagPrefix + childNames form the names of allowed children for the parentName, childNames can be null
      * @param parentName the parentName
      * @throws SAXException in case none of the childnames is allowed, an exception is thrown with explanation text that lists the allowed children
      */
     public static void verifyChildType(XMLElement child, String tagPrefix ,String[] childNames, String parentName) throws SAXException {
-	String[] tagPrefixes = new String[childNames.length];
-	for (int i = 0;i < childNames.length;i++)
-	    tagPrefixes[i] = tagPrefix;
+	String[] tagPrefixes = null;
+	if (childNames != null) {
+	    tagPrefixes = new String[childNames.length];
+	    for (int i = 0;i < childNames.length;i++)
+		tagPrefixes[i] = tagPrefix;
+	}
 	verifyChildType(child, tagPrefixes, childNames, parentName);
     }
     
@@ -314,18 +328,6 @@ public class Utilities {
     static public ArrayList<XMLElement> createXMLElementList(XMLElement newElement) {
 	ArrayList<XMLElement>  returnvalue = new ArrayList<XMLElement>();
 	returnvalue.add(newElement);
-	return returnvalue;
-    }
-
-    /**
-     * creates an ArrayList of XMLElement, with a list of XMLElements
-     * @param newElementList 
-     * @return the new ArrayList
-     */
-    static public ArrayList<XMLElement> createXMLElementList(List<?> newElementList) {
-	ArrayList<XMLElement>  returnvalue = new ArrayList<XMLElement>();
-	for (int i = 0;i < newElementList.size();i++)
-	    returnvalue.add((XMLElement)newElementList.get(i)); 
 	return returnvalue;
     }
 
