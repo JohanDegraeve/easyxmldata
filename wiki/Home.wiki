@@ -29,4 +29,4 @@ When validating a received XML Element in [http://www.johandegraeve.net/easyxmld
 
 The [http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/Utilities.html  Utilities] class defines some useful static methods.
 
-'<'test'>'
+'<test>'
