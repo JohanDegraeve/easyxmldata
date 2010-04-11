@@ -27,7 +27,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Defines methods to be implemented for every possible XML Element that can be created based on tags found in the parsed XML page.<br>
- * Per allowed tag in the xml, there must be one class that implements XMLElement and that has the same name (in lower case) as the name of the tag<br>
+ * Per allowed tag in the xml, there must be one class that implements XMLElement and that has the same name as the name of the tag<br>
  * It is also possible to define the custom classes with a Start string followed by the tag name. In that case the list off packagenames
  * <br>When creating the {@link net.johandegraeve.easyxmldata.EasyXMLDataParser} object, it must include a package name being the real package name followed by
  * &quot;.&quot;<i>the starting string&quot;</i>
