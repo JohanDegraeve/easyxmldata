@@ -387,3 +387,68 @@ public class main {
     }
 }
 }}}
+
+= Example 2 : DefaultXMLElement is used for every tag found in the XML page =
+
+Here we don't define any class. In this case we're obliged to create an EasyXMLDataParser with ignoreUnkonwnTags set to true.
+The EasyXMLDataParser is created with packageNames = null and prefixNames = null, because the parser doesn't need to try to create
+a class corresponding to the tags, so it will create a DefaultXMLElement for each tag.
+
+This is the XML being parsed : http://www.johandegraeve.net/easyxmldata/example2/localSearch.xml
+
+{{{
+package examplepackagename;
+
+import java.util.ArrayList;
+
+import net.johandegraeve.easyxmldata.XMLElement;
+import net.johandegraeve.easyxmldata.EasyXMLDataParser;
+
+import org.xml.sax.SAXParseException;
+
+public class main {
+        public static void main (String[] args)   {
+            XMLElement result = null;
+            String exceptionresult;
+            ArrayList<String> resultStrings = new ArrayList<String>();
+           
+            EasyXMLDataParser myParser = new EasyXMLDataParser(
+              null,null);
+            try {
+              result = myParser.parse("http://www.johandegraeve.net/easyxmldata/example2/localSearch.xml");
+               
+         } catch (SAXParseException e) {
+               exceptionresult = e.toString() +
+              "\n" +
+              "LineNumber = " +   e.getLineNumber() + "\n" +
+              "ColumnNumber = " +   e.getColumnNumber() + "\n" +
+              "PublicId = " +   e.getPublicId() + "\n" +
+              "SystemId = " +   e.getSystemId() + "\n";
+              
+
+          System.out.printf(exceptionresult);
+         }
+         
+         getText(resultStrings, result);
+         for (int i = 0;i < resultStrings.size();i++)
+          System.out.println(resultStrings.get(i));
+        }
+       
+        static private void getText(ArrayList<String> list, XMLElement result) {
+            String text;
+           
+            if (result.getTagName() != null)
+          if (result.getTagName().equals("Title")) {
+                text = result.getText();
+                if (text != null)
+                    if (text != "")
+                    list.add(text);
+          }
+           
+            ArrayList<XMLElement> children = result.getChildren();
+            if (children != null)
+          for (int i = 0;i < children.size();i++)
+              getText(list, children.get(i));
+        }
+} 
+}}} 
