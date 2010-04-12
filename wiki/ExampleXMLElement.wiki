@@ -25,9 +25,11 @@ In the examples, following XML is used :
 
 = Example 1 : custom class is created for each possible tag =
 
+For each possible tag that can appear in the XML source, we create a corresponding class.
+
 ==Step 1==
 
-First of all we can define the corresponding classes, one per element that will hold the elements.
+First of all we define the corresponding classes, one per element type.
 Here is a sample package : http://www.johandegraeve.net/easyxmldata/exampleStep1/src.zip
 There's nothing yet about XML parsing, it's just a sample with some getters and setters.
 In this example, we haven't considered the "time" attribute in the note element.
@@ -158,7 +160,7 @@ public void addText(String text) throws SAXException
 
 There are two possibilities to add text : trimmed or untrimmed.
 This method will have the text trimmed, ie String.trim has been called on text before it's being passed here.
-We may chose which one we want, but we should align the implementation of the implementation of preserveSpaces().
+We may chose which one we want, but we should align the implementation with the implementation of preserveSpaces().
 In case we use addText, we should return 'false' in preserveSpaces. In case we use addUnTrimmedText, then we should return 'true' in
 preserve Spaces().
 
@@ -197,7 +199,7 @@ The method is defined as :
 public void complete() throws SAXException
 }}}
 
-The goal of the implementation is to throw an Exception. It is called when the end tag of an XML Element is reached.
+The goal of the implementation is to throw an Exception in case the XML Element is not complete at the moment the end tag is reached.
 We can check here whether all mandatory children are received or not, and if necessary throw an exception.
 
 In the following example we expect that a note element has a to, from, heading and body child.
@@ -259,6 +261,8 @@ Examples :
 
 {{{
 public class NOTESnotelist implements XMLElement {
+...
+    private ArrayList<NOTESnote> noteList;
 ...
     public ArrayList<XMLElement> getChildren() {
 	return new ArrayList<XMLElement>(noteList);
