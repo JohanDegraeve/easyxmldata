@@ -1,6 +1,6 @@
 #summary Example package using XMLElement
 
-<wiki:toc max_depth="1" />
+<wiki:toc max_depth="3" />
 
 = Introduction =
 
