@@ -396,6 +396,8 @@ a class corresponding to the tags, so it will create a DefaultXMLElement for eac
 
 This is the XML being parsed : http://www.johandegraeve.net/easyxmldata/example2/localSearch.xml
 
+The example will search all "Title" tags and print the list of titles.
+
 {{{
 package examplepackagename;
 
