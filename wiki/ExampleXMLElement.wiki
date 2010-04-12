@@ -29,14 +29,14 @@ In the examples, following XML is used :
 
 For each possible tag that can appear in the XML source, we create a corresponding class.
 
-==Step 1==
+==Step 1 : define a custom class for each XML Element, without caring about the XML representation ==
 
 First of all we define the corresponding classes, one per element type.
 Here is a sample package : http://www.johandegraeve.net/easyxmldata/exampleStep1/src.zip
 There's nothing yet about XML parsing, it's just a sample with some getters and setters.
 In this example, we haven't considered the "time" attribute in the note element.
 
-==Step 2==
+==Step 2 : now every custom class must implement the interface XMLElement ==
 
 Now each class needs to implement the interface XMLElement. When using Eclipse, we just need to add 'implements XMLElement' in every
 class declaration and then add all unimplemented methods. In many cases, we don't need to change the default implementation made by Eclipse,
@@ -349,7 +349,7 @@ public String toString
 
 This method is not mandatory to be implemented.
 
-==Step 3==
+==Step 3 : use the parser ==
 
 Now we can use the classes. In the example package nothing specific is done with it, the classes can be extended with custom functionality.
 
