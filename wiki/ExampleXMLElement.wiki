@@ -1,5 +1,7 @@
 #summary Example package using XMLElement
 
+<wiki:toc max_depth="1" />
+
 = Introduction =
 
 Here some examples for using the interface [http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/XMLElement.html XMLElement]
