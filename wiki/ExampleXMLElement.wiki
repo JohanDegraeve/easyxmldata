@@ -348,3 +348,42 @@ public String toString
 }}}
 
 This method is not mandatory to be implemented.
+
+==Step 3==
+
+Now we can use the classes. In the example package nothing specific is done with it, the classes can be extended with custom functionality.
+
+Here the main classes will download the XML, parse it, and print the XML representation.
+An important class here is EasyXMLDataParser where we use the method "parse".
+
+The parameter "ignoreUnknownTags" defines what to do in case XML tags are found for which no class could be find in the list of defined packages and corresponding prefixes. In this case the value "false" is used, in which case an exception will be thrown if one of the tags has no corresponding class.
+
+{{{
+public class main {
+    public static void main (String[] args)   {
+
+            EasyXMLDataParser myParser = new EasyXMLDataParser(
+            	    new String[] {"examplepackagename"},
+            	    new String[] {"NOTES"}, 
+            	    false);
+            try {
+                NOTESnotelist resultList = (NOTESnotelist) myParser.parse("http://www.johandegraeve.net/easyxmldata/exampleStep2/notelist.xml");
+                System.out.println(Utilities.createXML(resultList));
+            } catch (SAXParseException e) {
+    	    String exceptionresult = "";
+	    	if (e.toString().contains("cannot be cast to")) 
+	 		exceptionresult = 
+	 		    "It seems a class cast exception will be thrown. This probably means your XML contains an element with an unkonwn tag.\n" +
+	    	    	"Check the location of the exception, then the element at this position, check the parent element of that elment.\n" +
+	    	    	" This is probably an unkonwn type";
+	    	exceptionresult = exceptionresult + e.toString() +
+	    	"\n" +
+	    	"LineNumber = " +   e.getLineNumber() + "\n" +
+	    	"ColumnNumber = " +   e.getColumnNumber() + "\n" +
+	    	"PublicId = " +   e.getPublicId() + "\n" +
+	    	"SystemId = " +   e.getSystemId() + "\n";
+	    	System.out.println(exceptionresult);
+            }
+    }
+}
+}}}
