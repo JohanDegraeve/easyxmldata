@@ -4,8 +4,6 @@
 
 Here some examples for using the interface [http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/XMLElement.html XMLElement]
 
-= Examples =
-
 In the examples, following XML is used : 
 
 {{{
@@ -25,17 +23,16 @@ In the examples, following XML is used :
 <notelist>
 }}}
 
-== Example 1 : custom class is created for each possible tag ==
+= Example 1 : custom class is created for each possible tag =
 
-
-===Step 1===
+==Step 1==
 
 First of all we can define the corresponding classes, one per element that will hold the elements.
 Here is a sample package : http://www.johandegraeve.net/easyxmldata/exampleStep1/src.zip
 There's nothing yet about XML parsing, it's just a sample with some getters and setters.
 In this example, we haven't considered the "time" attribute in the note element.
 
-===Step 2===
+==Step 2==
 
 Now each class needs to implement the interface XMLElement. When using Eclipse, we just need to add 'implements XMLElement' in every
 class declaration and then add all unimplemented methods. In many cases, we don't need to change the default implementation made by Eclipse,
@@ -52,7 +49,8 @@ The classes are then : NOTESbody, NOTESfrom, NOTESheading, NOTESnote, NOTESnotel
 
 Each of the methods in the interface is explained by explaining some of the example classes.
 
-====addAttributes====
+===addAttributes===
+
 The method is defined as :
 {{{
 public void addAttributes(Attributes attributes) throws SAXException
@@ -87,7 +85,7 @@ public class NOTESnote implements XMLElement {
 }
 }}}
 
-====addChild====
+===addChild===
 The method is defined as :
 {{{
 public void addChild(XMLElement child) throws SAXException
@@ -151,7 +149,7 @@ public class NOTESnote implements XMLElement {
 }
 }}}
 
-====addText====
+===addText===
 
 The method is defined as :
 {{{
@@ -176,7 +174,7 @@ public class NOTESbody implements XMLElement {
 }
 }}}
 
-====addUnTrimmedText====
+===addUnTrimmedText===
 
 The method is defined as :
 {{{
@@ -192,7 +190,7 @@ preserve Spaces().
 
 In the example package, there's no example implementation for addUnTrimmedText.
 
-====complete====
+===complete===
 
 The method is defined as :
 {{{
@@ -225,7 +223,7 @@ public class NOTESnote implements XMLElement {
 }
 }}}
 
-====getAttributes====
+===getAttributes===
 
 The method is defined as :
 {{{
@@ -248,7 +246,7 @@ public class NOTESnote implements XMLElement {
 }
 }}}
 
-====getChildren====
+===getChildren===
 
 The method is defined as :
 {{{
@@ -291,7 +289,7 @@ public class NOTESnote implements XMLElement {
 }
 }}}
 
-====getTagName====
+===getTagName===
 
 The method is defined as :
 {{{
@@ -313,7 +311,7 @@ public class NOTESnote implements XMLElement {
 }
 }}}
 
-====getText====
+===getText===
 
 The method is defined as :
 {{{
@@ -324,7 +322,7 @@ This method will be called by Utilities.createXML(XMLElement)
 
 If the element holds text then the implementation must return the text.
 
-====preserveSpaces====
+===preserveSpaces===
 
 The method is defined as :
 {{{
@@ -336,7 +334,7 @@ This method will be called by Utilities.createXML(XMLElement)
 If the implementing class uses addText, then preserveSpaces should return false.
 If the implementing class uses addUnTrimmedText, then preserveSpaces should return true.
 
-====toString====
+===toString===
 
 The method is defined as :
 {{{
@@ -344,5 +342,3 @@ public String toString
 }}}
 
 This method is not mandatory to be implemented.
-
-
