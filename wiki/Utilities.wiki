@@ -1,0 +1,43 @@
+#summary The Utilities class
+
+= Introduction =
+
+The Utilities class has some static methods with useful functionality.
+
+
+= createXML =
+
+The method is defined as :
+{{{
+   public static String createXML(XMLElement input, int indent)
+}}}
+
+It will create an XML representation of the input. indent is the initial indentation.
+For each child an additional indentation of 3 spaces will be used, except when input.preserveSpaces returns true
+
+= createXMLElementList =
+
+The method is defined as :
+{{{
+   static public ArrayList<XMLElement> createXMLElementList(XMLElement newElement) {
+}}}
+
+This methods creates an ArrayList with one XMLElement
+
+= getClassname =
+
+The method is defined as
+{{{
+    static public String getClassname (Class c) {
+}}}
+
+This is useful to determine the class of a received child.
+
+= getMandatoryAttributeValues =
+
+The method is defined as
+{{{
+    static public String[] getMandatoryAttributeValues(XMLElement xmlElement , Attributes attributes, String[] attributeqNames)  throws SAXException {
+}}}
+
+
