@@ -40,4 +40,73 @@ The method is defined as
     static public String[] getMandatoryAttributeValues(XMLElement xmlElement , Attributes attributes, String[] attributeqNames)  throws SAXException {
 }}}
 
+Gets the values of the attributes that you consider mandatory. If a specified attribute name is not present, a SAXException will be thrown.
 
+
+= getOptionalAttributeValues =
+
+The method is defined as
+{{{
+    static public String[] getOptionalAttributeValues(Attributes attributes, String[] attributeqNames)  throws SAXException {
+}}}
+
+Gets the values of the attributes that you consider optional. For each attribute, a default value is specified.
+
+Example can be found in http://www.johandegraeve.net/easyxmldata/exampleStep2/src.zip
+
+{{{
+public class NOTESnote implements XMLElement {
+...
+    private  Date myTime;
+...
+    public void addAttributes(Attributes arg0) throws SAXException {
+	    String[] attrValues = Utilities.getOptionalAttributeValues(
+		    	arg0, 
+		    	new String[] {
+		    		"time"
+		    	}, 
+		    	new String[]  {
+		    		"12:00"
+		    	});
+	    SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+	    try {
+		myTime = format.parse(attrValues[0]);
+	    } catch (ParseException e) {
+		throw new SAXException("Element type note has an invalid time attribute. Expected format = \"HH:mm\"");
+	    }
+    }
+...
+}
+}}}
+
+= verifyChildType =
+
+The method is defined as
+{{{
+    public static void verifyChildType(XMLElement child, String tagPrefix ,String[] childNames, String parentName) throws SAXException
+}}}
+
+Used to check if a received XMLElement is an allowed one.
+
+Example can be found in http://www.johandegraeve.net/easyxmldata/exampleStep2/src.zip
+
+
+{{{
+public class NOTESnotelist implements XMLElement {
+...
+    private ArrayList<NOTESnote> noteList;
+...
+    public NOTESnotelist() {
+	noteList = new ArrayList<NOTESnote>();
+    }
+    
+...
+   @Override
+    public void addChild(XMLElement arg0) throws SAXException {
+	Utilities.verifyChildType(arg0, constants.prefix, new String[] {"note"}, "notelist");
+	if (arg0 instanceof NOTESnote)
+	    noteList.add((NOTESnote)arg0);
+    }
+...    
+}
+}}}
