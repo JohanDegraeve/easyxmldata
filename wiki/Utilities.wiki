@@ -81,12 +81,18 @@ public class NOTESnote implements XMLElement {
 
 = verifyChildType =
 
-The method is defined as
+There are two versions : 
 {{{
     public static void verifyChildType(XMLElement child, String tagPrefix ,String[] childNames, String parentName) throws SAXException
 }}}
 
-Used to check if a received XMLElement is an allowed one.
+or
+
+{{{
+   public static void verifyChildType(XMLElement child, String[] tagPrefixes,String[] childNames, String parentName) throws SAXException 
+}}}
+
+Used to check if a received XMLElement is an allowed one. It will verify if the child's classname is any of the specified class names obtained when combining tagPrefixes with childNames.
 
 Example can be found in http://www.johandegraeve.net/easyxmldata/exampleStep2/src.zip
 
