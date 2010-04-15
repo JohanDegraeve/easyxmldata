@@ -1,5 +1,7 @@
 #summary The Utilities class
 
+<wiki:toc max_depth="3" />
+
 = Introduction =
 
 The Utilities class has some static methods with useful functionality.
