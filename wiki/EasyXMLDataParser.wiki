@@ -1,0 +1,79 @@
+#summary The EasyXMLDataParser class
+
+= Introduction =
+
+This class is needed to parse an XML document.
+First instantiate the class using one of the two constructors.
+
+Then used thet method parse to parse your XML
+
+
+= EasyXMLDataParser =
+
+There are two constructors
+
+The first one will create an EasyXMLDataParser with ignoreUnknownTags set to true.
+{{{
+   public EasyXMLDataParser (String[] packagesNames, String[] prefixNames)
+}}}
+
+{{{
+   public EasyXMLDataParser (String[] packagesNames, String[] prefixNames, boolean ignoreUnknownTags)
+}}}
+
+packageNames : is the list of packages through which the parser will search for a class with the same name as a received XML tag
+
+prefixNames : is the corresponding list of prefixes. packagesNames[0] will be preceded by prefixNames[0] 
+
+ignoreUnknownTags : when set to false and if for a received XML Tag no class could be created in the list of packages with the corresponding prefix, then an exception will be thrown. When set to true, and if for a received XML tag, no class could be created, then a DefaultXMLElement will be created.
+
+
+= parse =
+
+This is to parse an XML page for which there are two versions
+
+The first one will create the second with charsetName = Charset.defaultCharset().toString()
+{{{
+   public XMLElement parse(String source) throws SAXParseException 
+}}}
+
+{{{
+       public XMLElement parse(String source, String charsetName) throws SAXParseException 
+}}}
+
+source : either a URL (http://... or file...) or a string containing the actual XML, ie anything starting with '<', preceded by 0 or more blanks.
+
+charsetName : in case the source is not a URL but a XML, then the source will be converted to a byte array using the specified charsetName. In case the source is a URL, the charsetName is not used.
+
+Example in http://www.johandegraeve.net/easyxmldata/exampleStep2/src.zip
+
+{{{
+public class main {
+    public static void main (String[] args)   {
+
+            EasyXMLDataParser myParser = new EasyXMLDataParser(
+            	    new String[] {"examplepackagename"},
+            	    new String[] {"NOTES"}, 
+            	    false);
+            try {
+                NOTESnotelist resultList = (NOTESnotelist) myParser.parse("http://www.johandegraeve.net/easyxmldata/exampleStep2/notelist.xml");
+                System.out.println(Utilities.createXML(resultList));
+            } catch (SAXParseException e) {
+    	    String exceptionresult = "";
+	    	if (e.toString().contains("cannot be cast to")) 
+	 		exceptionresult = 
+	 		    "It seems a class cast exception will be thrown. This probably means your XML contains an element with an unkonwn tag.\n" +
+	    	    	"Check the location of the exception, then the element at this position, check the parent element of that elment.\n" +
+	    	    	" This is probably an unkonwn type";
+	    	exceptionresult = exceptionresult + e.toString() +
+	    	"\n" +
+	    	"LineNumber = " +   e.getLineNumber() + "\n" +
+	    	"ColumnNumber = " +   e.getColumnNumber() + "\n" +
+	    	"PublicId = " +   e.getPublicId() + "\n" +
+	    	"SystemId = " +   e.getSystemId() + "\n";
+	    	System.out.println(exceptionresult);
+            }
+    }
+}
+}}}
+
