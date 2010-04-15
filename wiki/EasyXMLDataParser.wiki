@@ -1,5 +1,7 @@
 #summary The EasyXMLDataParser class
 
+<wiki:toc max_depth="3" />
+
 = Introduction =
 
 This class is needed to parse an XML document.
@@ -45,6 +47,7 @@ source : either a URL (http://... or file...) or a string containing the actual 
 
 charsetName : in case the source is not a URL but a XML, then the source will be converted to a byte array using the specified charsetName. In case the source is a URL, the charsetName is not used.
 
+= example = 
 Example in http://www.johandegraeve.net/easyxmldata/exampleStep2/src.zip
 
 {{{
@@ -76,4 +79,3 @@ public class main {
     }
 }
 }}}
-
