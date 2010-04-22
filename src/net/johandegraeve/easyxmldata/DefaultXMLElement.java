@@ -36,13 +36,13 @@ public class DefaultXMLElement implements XMLElement {
     /**
      * the attributes, if any
      */
-    private AttributesImpl myAttributes;
+    private Attributes myAttributes;
     /**
      * list of XMLElement children, if any
      */
     private ArrayList<XMLElement> XMLElementList;
     /**
-     * the text if any
+     * the text if any, trimmed
      */
     private String theText;
 
@@ -73,7 +73,7 @@ public class DefaultXMLElement implements XMLElement {
      * get the attributes
      * @return the attributes, null if no attributes
      */
-    public AttributesImpl getAttributes() {
+    public Attributes getAttributes() {
 	return myAttributes;
     }
     
@@ -95,8 +95,8 @@ public class DefaultXMLElement implements XMLElement {
     }
     
     /**
-     * the text untrimmed !
-     * @return the text, null if no text received or empty string
+     * the text trimmed !
+     * @return the trimmed text, null if no text received or empty string
      */
     public String getText() {
 	return (theText.equalsIgnoreCase("") ? null : theText);
@@ -128,6 +128,17 @@ public class DefaultXMLElement implements XMLElement {
     }
     
     /**
+     * constructor
+     * @param newElement
+     */
+    public DefaultXMLElement(XMLElement newElement) {
+	myAttributes = newElement.getAttributes();
+	tagName = newElement.getTagName();
+	theText = newElement.getText();
+	XMLElementList = newElement.getChildren();
+    }
+    
+    /**
      * stores attributes in local field
      * @see net.johandegraeve.easyxmldata.XMLElement#addAttributes(org.xml.sax.Attributes)
      */
@@ -148,17 +159,10 @@ public class DefaultXMLElement implements XMLElement {
      * @see net.johandegraeve.easyxmldata.XMLElement#addText(java.lang.String)
      */
     public void addText(String text) throws SAXException {
-	;
     }
 
-    /**
-     * Stores text in local field.
-     * @param text the untrimmed text
-     * @throws SAXException 
-     * @see net.johandegraeve.easyxmldata.XMLElement#addText(java.lang.String)
-     */
     public void addUnTrimmedText(String text) throws SAXException {
-	theText = text;
+	theText = text;;
     }
 
     /**
