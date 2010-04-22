@@ -47,40 +47,6 @@ public class Utilities {
 	      }
 	    return FQClassName;
     }
-    
-    /**
-     * calls  {@link #makeEndTag(String, int)} with indent = 0
-     * @param tag
-     * @return string
-     */
-    /*static public String makeEndTag(String tag) {
-	return makeEndTag(tag, 0);
-    }*/
-    
-    /**
-     * returns the an endtag to be used for creating an XML : &lt;/ ..the tag name ..&gt;<br>
-     * @param tag
-     * @param indent
-     * @return string
-     */
-    /*static private String makeEndTag(String tag, int indent) {
-	StringBuilder returnvalue = new StringBuilder();
-	for (int i = 0;i < indent;i++) {
-	    returnvalue.append(" ");
-	}
-	returnvalue.append("</" + tag  + ">\n");
-	return returnvalue.toString();
-    }*/
-
-    
-    /**
-     * calls  {@link #makeStartTag(String, int)} with indent = 0
-     * @param tag
-     * @return string
-     */
-   /* static public String makeStartTag(String tag) {
-	return makeStartTag(tag, 0);
-    }*/
 
     /**
      * make the start to be used for creating an XML : &lt; ..the tag name ..&gt;<br>
@@ -96,53 +62,7 @@ public class Utilities {
 	returnvalue.append( "<" + tag  + ">\n");
 	return returnvalue.toString();
     }
-
-    /**
-     * Used for converting simple  text elements to XML, it will generate the starttag, text and endtag.<br>
-     * If the element contains attributes then this can't be used.
-     * @param input the text, if null the no text is added
-     * @param indent required indentation
-     * @param tag the tag of the element
-     * @return String
-     */
-    /*static private String toString(String input, int indent, String tag) {
-	StringBuilder returnvalue = new StringBuilder();
-	returnvalue.append(makeStartTag(tag,indent));
-	if (input != null) {
-	    for (int i = 0;i < indent + 3;i++)
-		returnvalue.append(" ");
-	    returnvalue.append("<![CDATA[");
-	    returnvalue.append(input);
-	    returnvalue.append("]]>");
-	    returnvalue.append("\n");
-	}
-	returnvalue.append(makeEndTag(tag, indent));
-	return returnvalue.toString();
-    }*/
-    
-    /**
-     * Build XML for Element with text and attributes.<br>
-     * @param input the text, if null then no text is added
-     * @param indent the indentation to be used
-     * @param tag the tag name for the element
-     * @param attr the attributes
-     * @return XML
-     */
-    /*static private String toStringWithAttributes(String input, int indent, String tag, Attributes attr) {
-	StringBuilder returnvalue = new StringBuilder();
-	returnvalue.append(makeStartTag(tag + " " + attributesToString(attr),indent));
-	if (input != null) {
-	    for (int i = 0;i < indent + 3;i++)
-		returnvalue.append(" ");
-	    returnvalue.append("<![CDATA[");
-	    returnvalue.append(input);
-	    returnvalue.append("]]>");
-	    returnvalue.append("\n");
-	}
-	returnvalue.append(makeEndTag(tag, indent));
-	return returnvalue.toString();
-    }*/
-    
+  
     /**
      * For each qName in attributeqNames, search in attributes if it's found and return the value.<br>
      * If qName is not found, then a SAXParseException will be thrown with Locator = null.<br>
@@ -198,7 +118,7 @@ public class Utilities {
      * @param attributes
      * @return list of attributesName=&quot;attribute value&quot; separated by blanks
      */
-    static public String attributesToString(Attributes attributes) {
+    static private String attributesToString(Attributes attributes) {
 	StringBuilder returnvalue = new StringBuilder();
 	for (int i = 0; i < attributes.getLength(); i++) {
 	    returnvalue.append(
@@ -319,16 +239,16 @@ public class Utilities {
 	returnvalue.append("</" + input.getTagName()  + ">\n");
 	return returnvalue.toString();
     }
-    
+
     /**
      * creates an ArrayList of XMLElement, with one XMLElement
      * @param newElement
      * @return the new ArrayList
      */
     static public ArrayList<XMLElement> createXMLElementList(XMLElement newElement) {
-	ArrayList<XMLElement>  returnvalue = new ArrayList<XMLElement>();
-	returnvalue.add(newElement);
-	return returnvalue;
+        ArrayList<XMLElement>  returnvalue = new ArrayList<XMLElement>();
+        returnvalue.add(newElement);
+        return returnvalue;
     }
-
-}
+    
+ }
