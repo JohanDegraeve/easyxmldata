@@ -23,7 +23,6 @@ import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Defines methods to be implemented for every possible XML Element that can be created based on tags found in the parsed XML page.<br>
