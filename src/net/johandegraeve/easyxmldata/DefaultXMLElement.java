@@ -23,7 +23,6 @@ import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Will be used for unrecognized tags, ie tags for which no corresponding class can be instantiated.<br>
@@ -143,7 +142,7 @@ public class DefaultXMLElement implements XMLElement {
      * @see net.johandegraeve.easyxmldata.XMLElement#addAttributes(org.xml.sax.Attributes)
      */
     public void addAttributes(Attributes attributes) throws SAXException {
-	this.myAttributes = new AttributesImpl(attributes);
+	this.myAttributes = attributes;
     }
 
     /**
@@ -161,6 +160,10 @@ public class DefaultXMLElement implements XMLElement {
     public void addText(String text) throws SAXException {
     }
 
+    /**
+     * assigns text
+     * @see net.johandegraeve.easyxmldata.XMLElement#addUnTrimmedText(java.lang.String)
+     */
     public void addUnTrimmedText(String text) throws SAXException {
 	theText = text;;
     }
