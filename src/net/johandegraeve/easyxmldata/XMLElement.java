@@ -101,7 +101,7 @@ public interface XMLElement {
     	public String toString();
     	
     	/**
-    	 * get children elements
+    	 * get children elements, should return null if there aren't any
     	 * @return the children
     	 */
     	public ArrayList<XMLElement> getChildren();
