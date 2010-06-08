@@ -221,7 +221,7 @@ public class EasyXMLDataParser  extends DefaultHandler {
      * @throws SAXParseException is important to catch because it contains details about why and where the parsing failed
      */
     public XMLElement parse(String source) throws SAXParseException {
-	return parse(source, Charset.defaultCharset().toString());
+	return parse(source, Charset.defaultCharset().displayName());
     }
 
     /**
