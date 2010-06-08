@@ -237,6 +237,8 @@ public class EasyXMLDataParser  extends DefaultHandler {
 	InputStream inputStream;
 	int counter = 0;
 	SAXParserFactory factory = SAXParserFactory.newInstance();
+	
+
         try {
             SAXParser parser = factory.newSAXParser();
             if (source != null)
@@ -297,6 +299,10 @@ public class EasyXMLDataParser  extends DefaultHandler {
         
         Class clsHandler = null;
         String tagName = name;
+        if (tagName == null)
+            tagName = localName;
+        if (tagName.length() == 0)
+            tagName = localName;
         stringBuilderStack.push(new StringBuilder());
         
         try {
@@ -306,6 +312,7 @@ public class EasyXMLDataParser  extends DefaultHandler {
             //try to instantiate an EasyXMLData instance of type packagename.prefixesbook
 	    for (int i = 0;i < packagesNames.length; i++) {
 	         try {
+	             
 	    	clsHandler = Class.forName(packagesNames[i] + "." + prefixNames[i] + tagName);
 	    	try {
 	    	    XMLObjectStack.push((XMLElement)clsHandler.newInstance());
