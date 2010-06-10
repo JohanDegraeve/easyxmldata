@@ -19,6 +19,7 @@
  */
 package net.johandegraeve.easyxmldata;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -234,7 +235,7 @@ public class EasyXMLDataParser  extends DefaultHandler {
      * @throws SAXParseException is important to catch because it contains details about why and where the parsing failed
      */
     public XMLElement parse(String source, String charsetName) throws SAXParseException {
-	InputStream inputStream;
+	BufferedInputStream inputStream;
 	int counter = 0;
 	SAXParserFactory factory = SAXParserFactory.newInstance();
 	
@@ -245,9 +246,9 @@ public class EasyXMLDataParser  extends DefaultHandler {
         	while (source.charAt(counter) == ' ') 
         	    counter ++;
             if (source !=null && source.charAt(counter) != '<') {
-        	inputStream = getInputStream(new URL(source));
+        	inputStream = new BufferedInputStream(getInputStream(new URL(source)));
             } else {
-        	inputStream = new ByteArrayInputStream(source.getBytes(charsetName));
+        	inputStream = new BufferedInputStream(new ByteArrayInputStream(source.getBytes(charsetName)));
             }
             parser.parse(inputStream, this);
             return rootFromXML;
@@ -369,5 +370,16 @@ public class EasyXMLDataParser  extends DefaultHandler {
 	if (XMLObjectStack.size() > 0) {
 	    rootFromXML = XMLObjectStack.peek();
 	}
+    }
+    
+    /**
+     * overriding this because I'm interested in whitespace characters
+     * @see org.xml.sax.helpers.DefaultHandler#ignorableWhitespace(char[], int, int)
+     */
+    @Override
+    public void ignorableWhitespace(char[] ch, int start, int length)
+            throws SAXException {
+        super.ignorableWhitespace(ch, start, length);
+        stringBuilderStack.peek().append(ch, start, length);
     }
 }
