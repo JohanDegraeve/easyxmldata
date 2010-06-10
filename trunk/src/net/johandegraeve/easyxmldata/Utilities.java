@@ -93,7 +93,7 @@ public class Utilities {
     /**
      * search in attributes for all names in attributeqNames, and if found gets the corresponding value in attributes and returns it.
      * @param attributes to search in
-     * @param attributeqNames the list off attributenames sto search for
+     * @param attributeqNames the list off attributenames to search for
      * @param defaultValues the default values in the same order as in attributeqNames
      * @return if a qname is not found, returns the default value, if a qname is found, returns the corresponding value
      */
@@ -101,13 +101,12 @@ public class Utilities {
 	
 	if (attributeqNames == null) return null;
 	
-	String[] returnvalue = defaultValues;
+	String[] returnvalue = new  String[attributeqNames.length];
 	
-	for (int i = 0; i < attributes.getLength(); i ++) {
-	    for (int j = 0; j < attributeqNames.length; j++) {
-		if (attributes.getQName(i).equals(attributeqNames[j]))
-		    returnvalue[j] = attributes.getValue(i);
-	    }
+	for (int i = 0; i < returnvalue.length; i ++) {
+	    returnvalue[i] = attributes.getValue(attributeqNames[i]);
+	    if (returnvalue[i] == null)
+		returnvalue[i] = defaultValues[i];
 	}
 	return returnvalue;
     }
