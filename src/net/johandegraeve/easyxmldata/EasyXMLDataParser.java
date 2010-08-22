@@ -27,12 +27,15 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Stack;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -238,10 +241,10 @@ public class EasyXMLDataParser  extends DefaultHandler {
 	BufferedInputStream inputStream;
 	int counter = 0;
 	SAXParserFactory factory = SAXParserFactory.newInstance();
-	
 
         try {
             SAXParser parser = factory.newSAXParser();
+            
             if (source != null)
         	while (source.charAt(counter) == ' ') 
         	    counter ++;
