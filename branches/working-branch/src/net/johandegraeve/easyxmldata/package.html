@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+Copyright (C) 2010  Johan Degraeve
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/gpl.txt>.
+    
+  Please contact Johan Degraeve at johan.degraeve@johandegraeve.net if you need
+  additional information or have any questions.
+-->
+</head>
+<body bgcolor="white">
+
+Offers an Interface, Utilites and a Parser which allows an easy XML Parser implementation for custom
+XML elements and corresponding java classes.<br><br>
+
+Examples can be found on <a href="http://code.google.com/p/easyxmldata/wiki/ExampleXMLElement" target="blank">Google Project Hosting</a>
+
+<h2>Package Specification</h2>
+
+You want to parse an XML document and create corresponding classes that will hold the XML parsed XML 
+elements. This package allows you to create your own classes that will represent the XML elements. For
+each possible tag that can be foud in the XML document, you need to define a custom class with the same name. Each class needs to implement the interface {@link net.johandegraeve.easyxmldata.XMLElement}<br>
+<br>
+The methods in the interface {@link net.johandegraeve.easyxmldata.XMLElement} allow the custom class to define 
+what needs to happen with
+<ul>
+  <li>the attributes that are found. The method will be called even if the list of attributes is empty.
+  It allows the custom class to populate internal fields with the values of the attributes in the XML document,
+  or to generate a {@link org.xml.sax.SAXException} in case attributes are missing.</li>
+  <li>child elements that are found : the custom class decides which children are allowed. Some may not be allowed in
+  which case the custom class can throw a {@link org.xml.sax.SAXException}.</li>
+  <li>text that is found. Two methods are called that contain the text, a trimmed version and an untrimmed version.</li>
+</ul>
+The methods also allow to
+<ul>
+  <li>check if an element is complete : this method is called when the end-tag of the element in the XML document
+  is encountered. At that moment the custom class may check whether all mandatory fields are received
+  and if not throw a {@link org.xml.sax.SAXException}.</li>
+</ul>
+<br>
+The package defines a {@link net.johandegraeve.easyxmldata.EasyXMLDataParser} class. This is where {@link org.xml.sax.helpers.DefaultHandler} is extended.
+The class overrides {@link org.xml.sax.helpers.DefaultHandler}'s methods {@link org.xml.sax.helpers.DefaultHandler#characters(char[] ch, int start, int length)},
+{@link org.xml.sax.helpers.DefaultHandler#endDocument}, {@link org.xml.sax.helpers.DefaultHandler#endElement}, 
+{@link org.xml.sax.helpers.DefaultHandler#setDocumentLocator}, {@link org.xml.sax.helpers.DefaultHandler#startDocument},
+{@link org.xml.sax.helpers.DefaultHandler#startElement}
+and this is where the methods defined in {@link net.johandegraeve.easyxmldata.XMLElement} are called for an instance of a class
+with the same name as the tag found in the XML Document (optionally packagename followed by a prefix).<br>
+<br>
+A trick is implemented to allow to define the classes corresponding to the XML elements, with a bit more clear names than just the name of the tag in smaller case.
+<br>
+The trick is that a prefix can be added before the name of the Element in the class name. When creating a {@link net.johandegraeve.easyxmldata.EasyXMLDataParser#EasyXMLDataParser(String[], String[])},
+then a list of package names and prefix names needs to be supplied. Whenever a tag is encountered in a parsed XML document, the parser will search for a class in each package supplied, but the class
+name will be prefixed with the corresponding prefix in the supplied array.<br>
+When validating a received XML Element in {@link net.johandegraeve.easyxmldata.XMLElement#addChild(XMLElement)}, and if you want to validate the type of XML element received, then
+it is important to know that the class of the XMLElement will be prefix+XML element name.
+
+<br><br>
+The {@link net.johandegraeve.easyxmldata.Utilities} class defines some useful static methods.
+
+
+<h2>Related Documentation</h2>
+
+For overviews, tutorials, examples, guides, and tool documentation, please see:<br><br>
+Examples can be found on <a href="http://code.google.com/p/easyxmldata/wiki/ExampleXMLElement" target="blank">Google Project Hosting</a>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>
