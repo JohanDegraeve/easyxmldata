@@ -1,0 +1,118 @@
+
+
+# Introduction #
+
+The Utilities class has some static methods with useful functionality.
+
+
+# createXML #
+
+The method is defined as :
+```
+   public static String createXML(XMLElement input, int indent)
+```
+
+It will create an XML representation of the input. indent is the initial indentation.
+For each child an additional indentation of 3 spaces will be used, except when input.preserveSpaces returns true
+
+# createXMLElementList #
+
+The method is defined as :
+```
+   static public ArrayList<XMLElement> createXMLElementList(XMLElement newElement) {
+```
+
+This methods creates an ArrayList with one XMLElement
+
+# getClassname #
+
+The method is defined as
+```
+    static public String getClassname (Class c) {
+```
+
+This is useful to determine the class of a received child.
+
+# getMandatoryAttributeValues #
+
+The method is defined as
+```
+    static public String[] getMandatoryAttributeValues(XMLElement xmlElement , Attributes attributes, String[] attributeqNames)  throws SAXException {
+```
+
+Gets the values of the attributes that you consider mandatory. If a specified attribute name is not present, a SAXException will be thrown.
+
+
+# getOptionalAttributeValues #
+
+The method is defined as
+```
+    static public String[] getOptionalAttributeValues(Attributes attributes, String[] attributeqNames)  throws SAXException {
+```
+
+Gets the values of the attributes that you consider optional. For each attribute, a default value is specified.
+
+Example can be found in http://www.johandegraeve.net/easyxmldata/exampleStep2/src.zip
+
+```
+public class NOTESnote implements XMLElement {
+...
+    private  Date myTime;
+...
+    public void addAttributes(Attributes arg0) throws SAXException {
+	    String[] attrValues = Utilities.getOptionalAttributeValues(
+		    	arg0, 
+		    	new String[] {
+		    		"time"
+		    	}, 
+		    	new String[]  {
+		    		"12:00"
+		    	});
+	    SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+	    try {
+		myTime = format.parse(attrValues[0]);
+	    } catch (ParseException e) {
+		throw new SAXException("Element type note has an invalid time attribute. Expected format = \"HH:mm\"");
+	    }
+    }
+...
+}
+```
+
+# verifyChildType #
+
+There are two versions :
+```
+    public static void verifyChildType(XMLElement child, String tagPrefix ,String[] childNames, String parentName) throws SAXException
+```
+
+or
+
+```
+   public static void verifyChildType(XMLElement child, String[] tagPrefixes,String[] childNames, String parentName) throws SAXException 
+```
+
+Used to check if a received XMLElement is an allowed one. It will verify if the child's classname is any of the specified class names obtained when combining tagPrefixes with childNames.
+
+Example can be found in http://www.johandegraeve.net/easyxmldata/exampleStep2/src.zip
+
+
+```
+public class NOTESnotelist implements XMLElement {
+...
+    private ArrayList<NOTESnote> noteList;
+...
+    public NOTESnotelist() {
+	noteList = new ArrayList<NOTESnote>();
+    }
+    
+...
+   @Override
+    public void addChild(XMLElement arg0) throws SAXException {
+	Utilities.verifyChildType(arg0, constants.prefix, new String[] {"note"}, "notelist");
+	if (arg0 instanceof NOTESnote)
+	    noteList.add((NOTESnote)arg0);
+    }
+...    
+}
+```

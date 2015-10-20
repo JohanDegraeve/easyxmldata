@@ -1,0 +1,454 @@
+
+
+# Introduction #
+
+Here some examples for using the interface [XMLElement](http://www.johandegraeve.net/easyxmldata/doc/net/johandegraeve/easyxmldata/XMLElement.html)
+
+In the examples, following XML is used :
+
+```
+<notelist>
+	<note time="16:15">
+		<to>Tove</to>
+		<from>Jani</from>
+		<heading>Reminder</heading>
+		<body>Don't forget me this weekend!</body>
+	</note>
+	<note  time="22:15">
+		<to>John</to>
+		<from>Mary</from>
+		<heading>Tip</heading>
+		<body>Promotion today in the bookstore</body>
+	</note>
+<notelist>
+```
+
+# Example 1 : custom class is created for each possible tag #
+
+For each possible tag that can appear in the XML source, we create a corresponding class.
+
+## Step 1 : define a custom class for each XML Element, without caring about the XML representation ##
+
+First of all we define the corresponding classes, one per element type.
+Here is a sample package : http://www.johandegraeve.net/easyxmldata/exampleStep1/src.zip
+There's nothing yet about XML parsing, it's just a sample with some getters and setters.
+In this example, we haven't considered the "time" attribute in the note element.
+
+## Step 2 : now every custom class must implement the interface XMLElement ##
+
+Now each class needs to implement the interface XMLElement. When using Eclipse, we just need to add 'implements XMLElement' in every
+class declaration and then add all unimplemented methods. In many cases, we don't need to change the default implementation made by Eclipse,
+which is , depending on the return type, 'return null', 'return false' or if the return type is void, nothing at all.
+
+**An important point is that each class must define a default constructor.**
+
+The interface XMLElement has 10 methods. Not each of them needs a real implementation, that depends on the aim of the specific XML element.
+
+The full example can be found here : http://www.johandegraeve.net/easyxmldata/exampleStep2/src.zip
+
+The prefix used here is "NOTES", every class corresponding to a tag will start with the prefix "NOTES".
+The classes are then : NOTESbody, NOTESfrom, NOTESheading, NOTESnote, NOTESnotelist, NOTESto corresponding to XML elements body, from, heading, note, notelist, to.
+
+Each of the methods in the interface is explained by explaining some of the example classes.
+
+### addAttributes ###
+
+The method is defined as :
+```
+public void addAttributes(Attributes attributes) throws SAXException
+```
+
+This method is used in the class that represents the 'note' tag.
+The call to Utilites.getOptionalAttributeValues will read the optional attributes "time", setting the default value to "12:00".
+If the time attribute is not present, then then return value of getOptionalAttributeValues will be an array with one string set to "12:00".
+If the time attribute is present, then the return value of getOptionalAttributeValues will be the corresponding value.
+```
+public class NOTESnote implements XMLElement {
+...
+    private  Date myTime;
+...
+    public void addAttributes(Attributes arg0) throws SAXException {
+	    String[] attrValues = Utilities.getOptionalAttributeValues(
+		    	arg0, 
+		    	new String[] {
+		    		"time"
+		    	}, 
+		    	new String[]  {
+		    		"12:00"
+		    	});
+	    SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+	    try {
+		myTime = format.parse(attrValues[0]);
+	    } catch (ParseException e) {
+		throw new SAXException("Element type note has an invalid time attribute. Expected format = \"HH:mm\"");
+	    }
+    }
+...
+}
+```
+
+### addChild ###
+The method is defined as :
+```
+public void addChild(XMLElement child) throws SAXException
+```
+
+In case our XML Element doesn't need children, then we can simple leave the implementation empty (the default behaviour implemented by
+Eclipse when we add all unimplemented methods). Or we could throw a SAXException.
+
+One method in the Utilities class is useful to let us do this job : Utilities.verifyChildType
+
+Here we clearly don't want to see any children
+```
+public class NOTESbody implements XMLElement {
+...
+    public void addChild(XMLElement child) throws SAXException {
+	Utilities.verifyChildType(child, constants.prefix, null, "body");
+    }
+...    
+}
+```
+
+Here we allow children but will throw an exception of there's unsupported children :
+
+```
+public class NOTESnotelist implements XMLElement {
+...
+    private ArrayList<NOTESnote> noteList;
+...
+    public NOTESnotelist() {
+	noteList = new ArrayList<NOTESnote>();
+    }
+    
+...
+   @Override
+    public void addChild(XMLElement arg0) throws SAXException {
+	Utilities.verifyChildType(arg0, constants.prefix, new String[] {"note"}, "notelist");
+	if (arg0 instanceof NOTESnote)
+	    noteList.add((NOTESnote)arg0);
+    }
+...    
+}
+```
+
+Here an example where different type of children are possible :
+
+```
+public class NOTESnote implements XMLElement {
+...
+	public void addChild(XMLElement arg0) throws SAXException {
+	Utilities.verifyChildType(arg0, constants.prefix, new String[] {"to","from","heading","body"}, "note");
+	if (arg0 instanceof NOTESto)
+	    myTo = (NOTESto)arg0;
+	if (arg0 instanceof NOTESfrom)
+	    myFrom = (NOTESfrom)arg0;
+	if (arg0 instanceof NOTESheading)
+	    myHeading = (NOTESheading)arg0;
+	if (arg0 instanceof NOTESbody)
+	    myBody = (NOTESbody)arg0;
+    }
+...    
+}
+```
+
+### addText ###
+
+The method is defined as :
+```
+public void addText(String text) throws SAXException
+```
+
+There are two possibilities to add text : trimmed or untrimmed.
+This method will have the text trimmed, ie String.trim has been called on text before it's being passed here.
+We may chose which one we want, but we should align the implementation with the implementation of preserveSpaces().
+In case we use addText, we should return 'false' in preserveSpaces. In case we use addUnTrimmedText, then we should return 'true' in
+preserve Spaces().
+
+```
+public class NOTESbody implements XMLElement {
+...
+    private String body;
+...    
+    public void addText(String text) throws SAXException {
+	body = text;
+    }
+...    
+}
+```
+
+### addUnTrimmedText ###
+
+The method is defined as :
+```
+public void addUnTrimmedText(String text) throws SAXException
+```
+
+There are two possibilities to add text : trimmed or untrimmed.
+This method will have the text untrimmed, ie it will include all space, carriage returns that were found between end of the start tag,
+start of the text and between end of the text, and start of the end tag.
+We may chose which one we want, but we should align the implementation of the implementation of preserveSpaces().
+In case we use addText, we should return 'false' in preserveSpaces. In case we use addUnTrimmedText, then we should return 'true' in
+preserve Spaces().
+
+In the example package, there's no example implementation for addUnTrimmedText.
+
+### complete ###
+
+The method is defined as :
+```
+public void complete() throws SAXException
+```
+
+The goal of the implementation is to throw an Exception in case the XML Element is not complete at the moment the end tag is reached.
+We can check here whether all mandatory children are received or not, and if necessary throw an exception.
+
+In the following example we expect that a note element has a to, from, heading and body child.
+```
+public class NOTESnote implements XMLElement {
+...
+    private NOTESfrom myFrom;
+    private NOTESto myTo;
+    private NOTESbody myBody;
+    private NOTESheading myHeading;
+...    
+    public void complete( ) throws SAXException {
+	if (myTo == null)
+	    throw new SAXException("Element of type note must have a child of type to");
+	if (myFrom == null)
+	    throw new SAXException("Element of type note must have a child of type from");
+	if (myHeading == null)
+	    throw new SAXException("Element of type note must have a child of type heading");
+	if (myBody == null)
+	    throw new SAXException("Element of type note must have a child of type body");
+    }
+...    
+}
+```
+
+### getAttributes ###
+
+The method is defined as :
+```
+public Attributes getAttributes() throws SAXException
+```
+
+This method will be called by Utilities.createXML(XMLElement)
+
+Example :
+```
+public class NOTESnote implements XMLElement {
+...
+    public Attributes getAttributes() {
+	SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+	AttributesImpl attributes = new AttributesImpl();
+	attributes.addAttribute(null, "time", "time", "CDATA", format.format(myTime));
+	return attributes;
+    }
+...    
+}
+```
+
+### getChildren ###
+
+The method is defined as :
+```
+public ArrayList<XMLElement> getChildren() throws SAXException
+```
+
+This method will be called by Utilities.createXML(XMLElement)
+
+Examples :
+
+```
+public class NOTESnotelist implements XMLElement {
+...
+    private ArrayList<NOTESnote> noteList;
+...
+    public ArrayList<XMLElement> getChildren() {
+	return new ArrayList<XMLElement>(noteList);
+    }
+...    
+}
+```
+
+```
+public class NOTESnote implements XMLElement {
+...
+    private NOTESfrom myFrom;
+    private NOTESto myTo;
+    private NOTESbody myBody;
+    private NOTESheading myHeading;
+...
+//here it is assumed that non of the elements is null. Which should be the case because the implementation of complete in the class
+// NOTESnote will throw an exception if any of these equals null.
+    public ArrayList<XMLElement> getChildren() {
+	return (new  ArrayList<XMLElement>() {{
+	    add (myTo);
+	    add(myFrom);
+	    add(myHeading);
+	    add(myBody);
+	}});
+    }
+...    
+}
+```
+
+### getTagName ###
+
+The method is defined as :
+```
+public String getTagName
+```
+
+This method will be called by Utilities.createXML(XMLElement)
+
+It must return the name of the XML tag it is representing.
+
+Example :
+
+```
+public class NOTESnote implements XMLElement {
+    public String getTagName() {
+	return "note";
+    }
+
+}
+```
+
+### getText ###
+
+The method is defined as :
+```
+public String getText
+```
+
+This method will be called by Utilities.createXML(XMLElement)
+
+If the element holds text then the implementation must return the text.
+
+### preserveSpaces ###
+
+The method is defined as :
+```
+public boolean preserveSpaces
+```
+
+This method will be called by Utilities.createXML(XMLElement)
+
+If the implementing class uses addText, then preserveSpaces should return false.
+If the implementing class uses addUnTrimmedText, then preserveSpaces should return true.
+
+### toString ###
+
+The method is defined as :
+```
+public String toString
+```
+
+This method is not mandatory to be implemented.
+
+## Step 3 : use the parser ##
+
+Now we can use the classes. In the example package nothing specific is done with it, the classes can be extended with custom functionality.
+
+Here the main classes will download the XML, parse it, and print the XML representation.
+An important class here is EasyXMLDataParser where we use the method "parse".
+
+The parameter "ignoreUnknownTags" defines what to do in case XML tags are found for which no class could be find in the list of defined packages and corresponding prefixes. In this case the value "false" is used, in which case an exception will be thrown if one of the tags has no corresponding class.
+
+```
+public class main {
+    public static void main (String[] args)   {
+
+            EasyXMLDataParser myParser = new EasyXMLDataParser(
+            	    new String[] {"examplepackagename"},
+            	    new String[] {"NOTES"}, 
+            	    false);
+            try {
+                NOTESnotelist resultList = (NOTESnotelist) myParser.parse("http://www.johandegraeve.net/easyxmldata/exampleStep2/notelist.xml");
+                System.out.println(Utilities.createXML(resultList));
+            } catch (SAXParseException e) {
+    	    String exceptionresult = "";
+	    	if (e.toString().contains("cannot be cast to")) 
+	 		exceptionresult = 
+	 		    "It seems a class cast exception will be thrown. This probably means your XML contains an element with an unkonwn tag.\n" +
+	    	    	"Check the location of the exception, then the element at this position, check the parent element of that elment.\n" +
+	    	    	" This is probably an unkonwn type";
+	    	exceptionresult = exceptionresult + e.toString() +
+	    	"\n" +
+	    	"LineNumber = " +   e.getLineNumber() + "\n" +
+	    	"ColumnNumber = " +   e.getColumnNumber() + "\n" +
+	    	"PublicId = " +   e.getPublicId() + "\n" +
+	    	"SystemId = " +   e.getSystemId() + "\n";
+	    	System.out.println(exceptionresult);
+            }
+    }
+}
+```
+
+# Example 2 : DefaultXMLElement is used for every tag found in the XML page #
+
+Here we don't define any class. In this case we're obliged to create an EasyXMLDataParser with ignoreUnkonwnTags set to true.
+The EasyXMLDataParser is created with packageNames = null and prefixNames = null, because the parser doesn't need to try to create
+a class corresponding to the tags, so it will create a DefaultXMLElement for each tag.
+
+This is the XML being parsed : http://www.johandegraeve.net/easyxmldata/example2/localSearch.xml
+
+The example will search all "Title" tags and print the list of titles.
+
+```
+package examplepackagename;
+
+import java.util.ArrayList;
+
+import net.johandegraeve.easyxmldata.XMLElement;
+import net.johandegraeve.easyxmldata.EasyXMLDataParser;
+
+import org.xml.sax.SAXParseException;
+
+public class main {
+        public static void main (String[] args)   {
+            XMLElement result = null;
+            String exceptionresult;
+            ArrayList<String> resultStrings = new ArrayList<String>();
+           
+            EasyXMLDataParser myParser = new EasyXMLDataParser(
+              null,null);
+            try {
+              result = myParser.parse("http://www.johandegraeve.net/easyxmldata/example2/localSearch.xml");
+               
+         } catch (SAXParseException e) {
+               exceptionresult = e.toString() +
+              "\n" +
+              "LineNumber = " +   e.getLineNumber() + "\n" +
+              "ColumnNumber = " +   e.getColumnNumber() + "\n" +
+              "PublicId = " +   e.getPublicId() + "\n" +
+              "SystemId = " +   e.getSystemId() + "\n";
+              
+
+          System.out.printf(exceptionresult);
+         }
+         
+         getText(resultStrings, result);
+         for (int i = 0;i < resultStrings.size();i++)
+          System.out.println(resultStrings.get(i));
+        }
+       
+        static private void getText(ArrayList<String> list, XMLElement result) {
+            String text;
+           
+            if (result.getTagName() != null)
+          if (result.getTagName().equals("Title")) {
+                text = result.getText();
+                if (text != null)
+                    if (text != "")
+                    list.add(text);
+          }
+           
+            ArrayList<XMLElement> children = result.getChildren();
+            if (children != null)
+          for (int i = 0;i < children.size();i++)
+              getText(list, children.get(i));
+        }
+} 
+```
