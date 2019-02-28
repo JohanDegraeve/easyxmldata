@@ -4,4 +4,3 @@ The package offers an Interface, Utilites and a Parser which allows an easy XML 
 
 You want to parse an XML document and create corresponding classes that will hold the XML parsed XML elements. This package allows you to create your own classes that will represent the XML elements. For each possible tag that can be foud in the XML document, you need to define a custom class with the same name as the XML element tag
 
-More info in the Wiki pages
